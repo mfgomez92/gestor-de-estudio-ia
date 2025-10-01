@@ -7,5 +7,10 @@
   },
   "storage": {
     "rules": "storage.rules"
+  },
+   "hosting": {
+    "site": "gestor-de-estudio-ia-4554",
+
+    "public": "public"
   }
 }
