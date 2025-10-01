@@ -8,9 +8,22 @@
   "storage": {
     "rules": "storage.rules"
   },
-   "hosting": {
+  "hosting": {
     "site": "gestor-de-estudio-ia-4554",
-
-    "public": "public"
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "predeploy": [
+      "npm run build"
+    ]
   }
 }

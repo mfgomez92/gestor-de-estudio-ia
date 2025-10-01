@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 // Importamos la configuración de nuestra base de datos
 import { db } from '@/firebase/config';
+import { FirebaseError } from 'firebase/app';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 // Interfaz para definir la estructura de una materia
@@ -50,6 +51,9 @@ export default function DashboardMaterias() {
   const probarConexionFirebase = async () => {
     setEstadoConexion("Probando conexión...");
     try {
+      if (process.env.NODE_ENV !== 'production') {
+        console.info('Firebase project detectado:', db.app.options.projectId);
+      }
       // Intentamos escribir un documento en una colección de prueba
       const testDocRef = doc(db, "test_collection", "test_doc");
       await setDoc(testDocRef, {
@@ -62,8 +66,15 @@ export default function DashboardMaterias() {
       // llamada "test_collection" con este documento dentro.
 
     } catch (error) {
-      console.error("Error al conectar con Firebase:", error);
-      setEstadoConexion("❌ Error en la conexión. Revisa la consola para más detalles.");
+      if (error instanceof FirebaseError) {
+        console.error("Error al conectar con Firebase:", error.code, error.message, error);
+        setEstadoConexion(
+          `❌ Error Firestore (${error.code}). Revisa tu configuración del proyecto y reglas.`,
+        );
+      } else {
+        console.error("Error inesperado al conectar con Firebase:", error);
+        setEstadoConexion("❌ Error desconocido en la conexión. Revisa la consola para más detalles.");
+      }
     }
   };
 
